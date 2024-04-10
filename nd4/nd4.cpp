@@ -33,11 +33,7 @@ SOCKET connectToServer(const char* hostname, const char* port) {
         exit(1);
     }
 
-    // Attempt to connect to the first address returned by
-    // the call to getaddrinfo
     for (ptr = res; ptr != NULL; ptr = ptr->ai_next) {
-
-        // Create a SOCKET for connecting to server
         ConnectSocket = socket(ptr->ai_family, ptr->ai_socktype,
             ptr->ai_protocol);
         if (ConnectSocket == INVALID_SOCKET) {
@@ -82,24 +78,6 @@ void sendGETRequest(SOCKET ConnectSocket) {
     }
 }
 
-void receiveAndParseResponse(SOCKET ConnectSocket) {
-    const int bufferSize = 512;
-    char recvbuf[bufferSize];
-    int result, recvbuflen = bufferSize;
-    string response;
-
-    // Receive data until the server closes the connection
-    do {
-        result = recv(ConnectSocket, recvbuf, recvbuflen, 0);
-        if (result > 0)
-            response.append(recvbuf, result);
-        else if (result == 0)
-            cout << "Connection closed\n";
-        else
-            cerr << "recv failed: " << WSAGetLastError() << endl;
-    } while (result > 0);
-}
-
 void cleanup(SOCKET ConnectSocket) {
     closesocket(ConnectSocket);
     WSACleanup();
@@ -115,7 +93,6 @@ int main() {
     int result, recvbuflen = bufferSize;
     string response;
 
-    // Move receiving part here to keep the connection open
     do {
         result = recv(ConnectSocket, recvbuf, recvbuflen, 0);
         if (result > 0)
