@@ -88,20 +88,21 @@ int main() {
     SOCKET ConnectSocket = connectToServer("www.lb.lt", "80");
     sendGETRequest(ConnectSocket);
 
-    const int bufferSize = 512;
+    const int bufferSize = 8192; // buffer size 8 KB
     char recvbuf[bufferSize];
     int result, recvbuflen = bufferSize;
     string response;
 
-    do {
-        result = recv(ConnectSocket, recvbuf, recvbuflen, 0);
-        if (result > 0)
-            response.append(recvbuf, result);
-        else if (result == 0)
-            cout << "Connection closed\n";
-        else
-            cerr << "recv failed: " << WSAGetLastError() << endl;
-    } while (result > 0);
+    while ((result = recv(ConnectSocket, recvbuf, bufferSize, 0)) > 0) {
+        response.append(recvbuf, result);
+    }
+
+    if (result == 0) {
+        cout << "Connection closed\n";
+    }
+    else {
+        cerr << "recv failed: " << WSAGetLastError() << endl;
+    }
 
     string userCurrency;
     while (true) {
