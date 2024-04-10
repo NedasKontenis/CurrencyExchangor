@@ -90,7 +90,7 @@ int main() {
 
     const int bufferSize = 8192; // buffer size 8 KB
     char recvbuf[bufferSize];
-    int result, recvbuflen = bufferSize;
+    int result;
     string response;
 
     while ((result = recv(ConnectSocket, recvbuf, bufferSize, 0)) > 0) {
